@@ -1,0 +1,70 @@
+{
+	"version": "2.0.0",
+	"inputs": [
+		{
+			"id": "start_module",
+			"default": "main",
+			"description": "Choose a starting module.",
+			"options": [
+				"data",
+				"image"
+			],
+			"type": "pickString"
+		}
+	],
+	"tasks": [
+		{
+			"label": "Install",
+			"linux": {
+				"command": "python"
+			},
+			"windows": {
+				"command": "py"
+			},
+			"args": [
+				"-m",
+				"pip",
+				"install",
+				"-r",
+				"requirements.txt",
+				"--user"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/source"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"type": "shell"
+		},
+		{
+			"label": "Run",
+			"linux": {
+				"command": "python"
+			},
+			"windows": {
+				"command": "py"
+			},
+			"args": [
+				"-m",
+				"mchqr.${input:start_module}"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/source"
+			},
+			"problemMatcher": [],
+			"type": "shell"
+		},
+		{
+			"label": "Install & Run",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Install",
+				"Run"
+			],
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,2 +1,2 @@
-# parallel-qr-code-scanner
+# Parallel QR code scanner
 Paralelní hledání QR kódů v obrazcích.
