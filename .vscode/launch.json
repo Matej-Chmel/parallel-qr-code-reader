@@ -16,7 +16,10 @@
 			"description": "Choose a starting module.",
 			"options": [
 				"data",
-				"image"
+				"geometry",
+				"image",
+				"platform",
+				"screen"
 			],
 			"type": "pickString"
 		}

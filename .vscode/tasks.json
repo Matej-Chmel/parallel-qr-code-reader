@@ -7,7 +7,10 @@
 			"description": "Choose a starting module.",
 			"options": [
 				"data",
-				"image"
+				"geometry",
+				"image",
+				"platform",
+				"screen"
 			],
 			"type": "pickString"
 		}
@@ -16,25 +19,50 @@
 		{
 			"label": "Install",
 			"linux": {
-				"command": "python"
+				"command": "python",
+				"args": [
+					"-m",
+					"pip",
+					"install",
+					"-r",
+					"requirements_common.txt",
+					"-r",
+					"requirements_linux.txt",
+					"--user"
+				]
+			},
+			"osx": {
+				"command": "python",
+				"args": [
+					"-m",
+					"pip",
+					"install",
+					"-r",
+					"requirements_common.txt",
+					"-r",
+					"requirements_osx.txt",
+					"--user"
+				]
 			},
 			"windows": {
-				"command": "py"
-			},
-			"args": [
-				"-m",
-				"pip",
-				"install",
-				"-r",
-				"requirements.txt",
-				"--user"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/source"
+				"command": "py",
+				"args": [
+					"-m",
+					"pip",
+					"install",
+					"-r",
+					"requirements_common.txt",
+					"-r",
+					"requirements_windows.txt",
+					"--user"
+				]
 			},
 			"group": {
 				"kind": "build",
 				"isDefault": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}/source/install"
 			},
 			"problemMatcher": [],
 			"type": "shell"
@@ -42,6 +70,9 @@
 		{
 			"label": "Run",
 			"linux": {
+				"command": "python"
+			},
+			"osx": {
 				"command": "python"
 			},
 			"windows": {
@@ -59,11 +90,11 @@
 		},
 		{
 			"label": "Install & Run",
-			"dependsOrder": "sequence",
 			"dependsOn": [
 				"Install",
 				"Run"
 			],
+			"dependsOrder": "sequence",
 			"problemMatcher": []
 		}
 	]
