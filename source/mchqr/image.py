@@ -72,28 +72,29 @@ class Image:
 		return self.show(x, y)
 
 def show_images(paths):
-	data_found = False
+	if not paths:
+		raise NoData('No images to show.')
+
 	screen = screen_size()
 
 	for path in paths:
-		data_found = True
-
 		if is_escape(Image(path)
 			.resize_max(max_width=screen.width // 2, max_height=screen.height)
 			.show_in_center(screen)):
 			break
 
-	if not data_found:
-		raise NoData('No images to show.')
-
 if __name__ == '__main__':
-	from mchqr.data import yield_datasets, yield_image_files
+	from mchqr.data import dataset_paths, image_paths
 
 	try:
-		show_images(yield_image_files(next(yield_datasets())))
+		show_images(
+			image_paths(
+				dataset_paths()[0]
+			)
+		)
+
+	except IndexError:
+		print('No available datasets.')
 
 	except NoData as e:
 		print(e)
-
-	except StopIteration:
-		print('No available datasets.')

@@ -12,9 +12,6 @@ class Point:
 		self.x = x
 		self.y = y
 
-	def __iter__(self):
-		return iter((self.x, self.y, self.item_type))
-
 	def __str__(self):
 		return str(self.as_list)
 
