@@ -15,10 +15,11 @@
 			"default": "main",
 			"description": "Choose a starting module.",
 			"options": [
+				"algorithm",
 				"data",
-				"detection",
 				"geometry",
 				"image",
+				"image_list",
 				"platform",
 				"screen"
 			],

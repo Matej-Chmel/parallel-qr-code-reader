@@ -1,16 +1,34 @@
+from __future__ import annotations
 import cv2 as cv
+from dataclasses import dataclass
 from pathlib import Path
-from mchqr.exceptions import NoData
-from mchqr.geometry import Size
-from mchqr.keys import is_escape, wait_key
-from mchqr.screen import screen_size
+from mchqr.geometry import Polygon, Size
+from mchqr.keys import wait_key
+from mchqr.style import Style
+from mchqr.typing import DecodedList
+from numpy import ndarray
+from pyzbar.pyzbar import decode, Decoded, ZBarSymbol
 
+@dataclass
 class Image:
-	def __init__(self, path: Path):
-		self.matrix = cv.imread(str(path))
-		self.name = path.stem
+	matrix: ndarray
+	name: str
 
-	def max_size(self, max_width, max_height=None):
+	def __post_init__(self):
+		self.height, self.width = self.matrix.shape[:2]
+
+	def detect(self) -> DecodedList:
+		return decode(self.matrix, [ZBarSymbol.QRCODE])
+
+	@staticmethod
+	def from_path(path: Path):
+		return Image(
+			cv.imread(
+				str(path)
+			), path.stem
+		)
+
+	def max_size(self, max_width: int, max_height: int = None) -> Size:
 		if not max_height:
 			max_height = max_width
 
@@ -23,7 +41,23 @@ class Image:
 
 		return size
 
-	def resized_same_ratio_size(self, new_height=None, new_width=None):
+	def resize_by_ratio(self, new_height: int = None, new_width: int = None) -> Image:
+		return self.resize_by_size(
+			self.resized_same_ratio_size(new_height, new_width)
+		)
+
+	def resize_by_size(self, size: Size):
+		return Image(
+			cv.resize(self.matrix, size.as_tuple, interpolation=cv.INTER_AREA),
+			self.name
+		)
+
+	def resize_max(self, max_width: int, max_height: int = None) -> Image:
+		return self.resize_by_size(
+			self.max_size(max_width, max_height)
+		)
+
+	def resized_same_ratio_size(self, new_height: int = None, new_width: int = None) -> Size:
 		old_height, old_width = self.height, self.width
 
 		if not new_height and not new_width:
@@ -32,69 +66,58 @@ class Image:
 		if new_height and new_width:
 			return Size(new_height, new_width)
 		elif not new_height:
-			return Size(new_width, old_height * new_width / old_width)
+			return Size(new_width, old_height * new_width / old_width).as_int
 		else:
-			return Size(old_width * new_height / old_height, new_height)
+			return Size(old_width * new_height / old_height, new_height).as_int
 
-	@property
-	def matrix(self):
-		return self.__matrix
-
-	@matrix.setter
-	def matrix(self, value):
-		self.__matrix = value
-		self.height, self.width = value.shape[:2]
-
-	def resize_by_ratio(self, new_height=None, new_width=None):
-		return self.resize_by_size(self.resized_same_ratio_size(new_height, new_width))
-
-	def resize_by_size(self, size: Size):
-		self.matrix = cv.resize(self.matrix, size.as_tuple, interpolation=cv.INTER_AREA)
-		return self
-
-	def resize_max(self, max_width, max_height=None):
-		return self.resize_by_size(self.max_size(max_width, max_height))
-
-	def show(self, x=0, y=0):
+	def show(self, x: int = 0, y: int = 0):
 		cv.namedWindow(self.name)
 		cv.moveWindow(self.name, x, y)
 		cv.imshow(self.name, self.matrix)
 
-		key = wait_key()
+		key: int = wait_key()
 
 		cv.destroyWindow(self.name)
 		return key
-	
+
 	def show_in_center(self, screen: Size):
 		center = screen.center
 		x = center.x - self.width // 2
 		y = center.y - self.height // 2
 		return self.show(x, y)
 
-def show_images(paths):
-	if not paths:
-		raise NoData('No images to show.')
+	def stroke_decoded(self, decoded: Decoded, style: Style):
+		return self.stroke_polygon(
+			Polygon(decoded.polygon), style
+		)
+	
+	def stroke_decoded_list(self, decoded_list: DecodedList, style: Style):
+		image = self
 
-	screen = screen_size()
+		for decoded in decoded_list:
+			image = image.stroke_decoded(decoded, style)
 
-	for path in paths:
-		if is_escape(Image(path)
-			.resize_max(max_width=screen.width // 2, max_height=screen.height)
-			.show_in_center(screen)):
-			break
+		return image
+
+	def stroke_polygon(self, polygon: Polygon, style: Style):
+		return Image(
+			cv.polylines(self.matrix, [polygon.as_array], True, style.color.as_tuple, style.line_width),
+			self.name
+		)
 
 if __name__ == '__main__':
 	from mchqr.data import dataset_paths, image_paths
 
 	try:
-		show_images(
-			image_paths(
-				dataset_paths()[0]
-			)
-		)
+		first_dataset = dataset_paths()[0]
+
+		try:
+			Image.from_path(
+				image_paths(first_dataset)[0]
+			).show()
+
+		except IndexError:
+			print('Dataset is empty.')
 
 	except IndexError:
 		print('No available datasets.')
-
-	except NoData as e:
-		print(e)

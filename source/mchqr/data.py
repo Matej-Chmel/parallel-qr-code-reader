@@ -1,13 +1,13 @@
-from pathlib import Path
-
 from mchqr import _n, _t, join_paths
+from mchqr.typing import PathList
+from pathlib import Path
 
 DATA_FOLDER = join_paths('data')
 
-def dataset_paths():
+def dataset_paths() -> PathList:
 	return [folder for folder in DATA_FOLDER.iterdir() if folder.is_dir()]
 
-def image_paths(path: Path):
+def image_paths(path: Path) -> PathList:
 	return [file for file in path.rglob('*') if file.is_file() and file.suffix.lower() in ['.jpg', '.png']]
 
 if __name__ == '__main__':
