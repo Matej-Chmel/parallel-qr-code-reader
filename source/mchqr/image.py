@@ -107,6 +107,7 @@ class Image:
 
 if __name__ == '__main__':
 	from mchqr.data import dataset_paths, image_paths
+	from mchqr.screen import screen_size
 
 	try:
 		first_dataset = dataset_paths()[0]
@@ -114,6 +115,8 @@ if __name__ == '__main__':
 		try:
 			Image.from_path(
 				image_paths(first_dataset)[0]
+			).resize_max(
+				*screen_size()
 			).show()
 
 		except IndexError:

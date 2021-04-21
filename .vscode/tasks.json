@@ -12,6 +12,7 @@
 				"image",
 				"image_list",
 				"platform",
+				"property",
 				"screen"
 			],
 			"type": "pickString"

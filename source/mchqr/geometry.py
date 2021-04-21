@@ -11,12 +11,15 @@ class Polygon:
 
 	@property
 	def as_array(self):
-		return np.array(self.points).reshape((-1, 1, 2))
+		return np.array(self.points)
 
 @dataclass
 class Size:
 	width: int
 	height: int
+
+	def __iter__(self):
+		return iter(self.as_tuple)
 
 	@property
 	def as_int(self):
@@ -35,10 +38,12 @@ class Size:
 
 if __name__ == '__main__':
 	size = Size(100, 200)
+	width, height = size
 
 	print(
 		size,
 		size.as_tuple,
+		[width, height],
 		size.center,
 		Size(4.1, 5.5).as_int,
 		sep='\n'

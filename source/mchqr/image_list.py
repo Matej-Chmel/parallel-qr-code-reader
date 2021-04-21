@@ -3,7 +3,7 @@ from mchqr.exceptions import NoData
 from mchqr.image import Image
 from mchqr.keys import is_escape
 from mchqr.screen import screen_size
-from mchqr.style import Color, Style
+from mchqr.style import Style
 from mchqr.typing import DecodedMatrix, PathList
 from typing import Iterable
 
@@ -54,10 +54,7 @@ if __name__ == '__main__':
 				image_paths(first_dataset)
 			)
 			images.stroke_decoded_matrix(
-				images.detect(),
-				Style(
-					Color(20, 40, 240)
-				)
+				images.detect(), Style.dark_blue
 			).show()
 
 		except NoData as e:
