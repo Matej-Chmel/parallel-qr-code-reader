@@ -15,7 +15,15 @@ def screen_size():
 		monitor_area = monitor_info.get("Monitor")
 		work_area = monitor_info.get("Work")
 
-		dimension = lambda i: monitor_area[i] - (monitor_area[i] - work_area[i]) * 2
+		def dimension(i: int):
+			monitor_dimension = monitor_area[i]
+			work_dimension = work_area[i]
+
+			return (
+				work_dimension
+				if monitor_dimension == work_dimension
+				else work_dimension - monitor_dimension // 20
+			)
 
 		return Size(
 			dimension(2),
