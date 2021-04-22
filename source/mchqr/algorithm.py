@@ -1,11 +1,12 @@
+from dataclasses import dataclass
 from mchqr.exceptions import NotOverriden
 from mchqr.image_list import ImageList
-from mchqr.typing import StrMatrix
+from mchqr.typing import Solution
 from time import perf_counter_ns
 
+@dataclass
 class Algorithm:
-	def __init__(self, images: ImageList):
-		self.images = images
+	images: ImageList
 
 	def measure(self):
 		start = perf_counter_ns()
@@ -14,7 +15,7 @@ class Algorithm:
 
 		return end - start, data
 
-	def run(self) -> StrMatrix:
+	def run(self) -> Solution:
 		raise NotOverriden(self.run.__qualname__)
 
 if __name__ == '__main__':
@@ -22,11 +23,11 @@ if __name__ == '__main__':
 		pass
 
 	class GoodAlgorithm(Algorithm):
-		def run(_) -> StrMatrix:
-			return [
-				['1a', '1b'],
-				['2a', '2b']
-			]
+		def run(_) -> Solution:
+			return {
+				'1.jpg': frozenset(['1a', '1b']),
+				'2.jpg': frozenset(['2a', '2b'])
+			}
 
 	def print_test(*algorithm_types):
 		print(

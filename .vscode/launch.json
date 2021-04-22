@@ -22,7 +22,8 @@
 				"image_list",
 				"platform",
 				"property",
-				"screen"
+				"screen",
+				"solution"
 			],
 			"type": "pickString"
 		}

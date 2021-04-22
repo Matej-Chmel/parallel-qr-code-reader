@@ -1,5 +1,4 @@
 from __future__ import annotations
-from mchqr.exceptions import NoData
 from mchqr.image import Image
 from mchqr.keys import is_escape
 from mchqr.screen import screen_size
@@ -23,9 +22,6 @@ class ImageList(list):
 		)
 
 	def show(self):
-		if not self:
-			raise NoData('No images to show.')
-
 		screen = screen_size()
 
 		for image in self:
@@ -44,21 +40,13 @@ class ImageList(list):
 		])
 
 if __name__ == '__main__':
-	from mchqr.data import dataset_paths, image_paths
+	from mchqr.test import on_first_dataset
 
-	try:
-		first_dataset = dataset_paths()[0]
+	def show_all(image_paths: PathList):
+		images = ImageList.from_paths(image_paths)
 
-		try:
-			images = ImageList.from_paths(
-				image_paths(first_dataset)
-			)
-			images.stroke_decoded_matrix(
-				images.detect(), Style.dark_blue
-			).show()
+		images.stroke_decoded_matrix(
+			images.detect(), Style.dark_blue
+		).show()
 
-		except NoData as e:
-			print(e)
-
-	except IndexError:
-		print('No available datasets.')
+	on_first_dataset(show_all)

@@ -106,21 +106,15 @@ class Image:
 		)
 
 if __name__ == '__main__':
-	from mchqr.data import dataset_paths, image_paths
 	from mchqr.screen import screen_size
+	from mchqr.test import on_first_dataset
+	from mchqr.typing import PathList
 
-	try:
-		first_dataset = dataset_paths()[0]
+	def show_first_image(image_paths: PathList):
+		Image.from_path(
+			image_paths[0]
+		).resize_max(
+			*screen_size()
+		).show()
 
-		try:
-			Image.from_path(
-				image_paths(first_dataset)[0]
-			).resize_max(
-				*screen_size()
-			).show()
-
-		except IndexError:
-			print('Dataset is empty.')
-
-	except IndexError:
-		print('No available datasets.')
+	on_first_dataset(show_first_image)
