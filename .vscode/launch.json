@@ -25,6 +25,8 @@
 				"get screen size",
 				"list image paths",
 				"os",
+				"process pool",
+				"sequence",
 				"show image",
 				"stroke qr codes",
 				"test static property"

@@ -61,23 +61,23 @@ def base_algorithm():
 @test
 def create_solution():
 	from mchqr.algo import Sequence
-	from mchqr.detector import zbar
-	from mchqr.image_list import ImageList
-	from mchqr.solution import encode_solution
+	from mchqr.solution import dump_solution_to_file
 
 	def save_decoded(path: Path, image_paths: PathList):
-		elapsed, solution = Sequence(
-			zbar,
-			ImageList.from_paths(image_paths)
-		).measure()
+		elapsed, solution = run_zbar(Sequence, image_paths)
 
-		encode_solution(
+		dump_solution_to_file(
 			path.joinpath('solution.json'),
 			solution
 		)
-		print(f'Elapsed: {elapsed / 1_000_000_000 : .2f} seconds')
+		print(
+			format_elapsed(elapsed)
+		)
 
 	on_first_dataset(save_decoded)
+
+def format_elapsed(elapsed: int):
+	return f'Elapsed: {elapsed / 1_000_000_000 : .2f} seconds'
 
 @test
 def geometry():
@@ -159,6 +159,40 @@ def os():
 	from mchqr.platform import OS
 
 	print(OS)
+
+@test
+def process_pool():
+	from mchqr.algo import ProcessPool
+
+	print_first_dataset_solution_by_zbar(ProcessPool)
+
+def print_first_dataset_solution_by_zbar(algo_type: type):
+	from mchqr.solution import dump_solution_to_str
+
+	def print_solution(image_paths: PathList):
+		elapsed, solution = run_zbar(algo_type, image_paths)
+
+		print(
+			format_elapsed(elapsed),
+			dump_solution_to_str(solution),
+			sep='\n'
+		)
+
+	on_first_dataset(print_solution)
+
+def run_zbar(algo_type: type, image_paths: PathList):
+	from mchqr.detector import zbar
+	from mchqr.image_list import ImageList
+
+	return algo_type(
+		zbar, ImageList.from_paths(image_paths)
+	).measure()
+
+@test
+def sequence():
+	from mchqr.algo import Sequence
+
+	print_first_dataset_solution_by_zbar(Sequence)
 
 @test
 def show_image():

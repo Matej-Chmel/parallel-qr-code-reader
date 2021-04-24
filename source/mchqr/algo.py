@@ -3,6 +3,7 @@ from mchqr.detector import Detector
 from mchqr.dev import NotOverriden
 from mchqr.image_list import ImageList
 from mchqr.solution import AlgoSolution
+from multiprocessing import Pool
 from time import perf_counter_ns
 
 @dataclass
@@ -19,6 +20,13 @@ class BaseAlgorithm:
 
 	def run(self) -> AlgoSolution:
 		raise NotOverriden(self.run)
+
+class ProcessPool(BaseAlgorithm):
+	def run(self) -> AlgoSolution:
+		with Pool(len(self.images)) as pool:
+			return dict(
+				pool.map(self.detector, self.images)
+			)
 
 class Sequence(BaseAlgorithm):
 	def run(self) -> AlgoSolution:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from json import dump, JSONDecoder, load
+from json import dump, dumps, JSONDecoder, load
 from mchqr.dev import StrList
 from mchqr.io import fopen
 from numpy import ndarray
@@ -29,27 +29,36 @@ class AlgoPair:
 			)
 		)
 
-def decode_content_solution(path: Path) -> Solution:
-	with fopen(path) as file:
-		return load(file, cls=SolutionDecoder)
-
 @dataclass
 class Detected:
 	content: str
 	polygon: ndarray
 
-def encode_solution(path: Path, solution: AlgoSolution):
+def dump_solution_to_file(path: Path, solution: AlgoSolution):
 	with fopen(path, 'w+') as file:
 		return dump(
-			dict(
-				map(
-					lambda pair: AlgoPair(*pair).encode(),
-					solution.items()
-				)
-			),
+			prepare_solution(solution),
 			file,
 			indent=4
 		)
+
+def dump_solution_to_str(solution: AlgoSolution):
+	return dumps(
+		prepare_solution(solution),
+		indent=4
+	)
+
+def load_solution(path: Path) -> Solution:
+	with fopen(path) as file:
+		return load(file, cls=SolutionDecoder)
+
+def prepare_solution(solution: AlgoSolution):
+	return dict(
+		map(
+			lambda pair: AlgoPair(*pair).encode(),
+			solution.items()
+		)
+	)
 
 Solution = Dict[str, StrList]
 
