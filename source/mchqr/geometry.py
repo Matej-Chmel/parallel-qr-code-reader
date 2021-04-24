@@ -1,8 +1,6 @@
 from dataclasses import astuple, dataclass
-from mchqr import  static_property
-import numpy as np
+from mchqr.dev import static_property
 from pyzbar.pyzbar import Point
-from typing import List
 
 @dataclass
 class Color:
@@ -13,20 +11,10 @@ class Color:
 	@property
 	def as_tuple(self):
 		return (self.blue, self.green, self.red)
-	
+
 	@static_property
 	def dark_blue():
 		return Color(20, 40, 240)
-
-PointList = List[Point]
-
-@dataclass
-class Polygon:
-	points: PointList
-
-	@property
-	def as_array(self):
-		return np.array(self.points)
 
 @dataclass
 class Size:

@@ -1,5 +1,5 @@
 import cv2 as cv
-from mchqr import PathList, StrList
+from mchqr.dev import PathList, StrList
 from pathlib import Path
 
 def dataset_paths() -> PathList:

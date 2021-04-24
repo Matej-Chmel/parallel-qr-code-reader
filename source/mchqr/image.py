@@ -2,11 +2,9 @@ from __future__ import annotations
 import cv2 as cv
 from dataclasses import dataclass
 from pathlib import Path
-from mchqr import DecodedList
-from mchqr.geometry import Polygon, Size, Style
+from mchqr.geometry import Size, Style
 from mchqr.io import wait_key
 from numpy import ndarray
-from pyzbar.pyzbar import decode, Decoded, ZBarSymbol
 
 @dataclass
 class Image:
@@ -15,9 +13,6 @@ class Image:
 
 	def __post_init__(self):
 		self.height, self.width = self.matrix.shape[:2]
-
-	def detect(self) -> DecodedList:
-		return decode(self.matrix, [ZBarSymbol.QRCODE])
 
 	@staticmethod
 	def from_path(path: Path):
@@ -85,21 +80,8 @@ class Image:
 		y = center.y - self.height // 2
 		return self.show(x, y)
 
-	def stroke_decoded(self, decoded: Decoded, style: Style):
-		return self.stroke_polygon(
-			Polygon(decoded.polygon), style
-		)
-	
-	def stroke_decoded_list(self, decoded_list: DecodedList, style: Style):
-		image = self
-
-		for decoded in decoded_list:
-			image = image.stroke_decoded(decoded, style)
-
-		return image
-
-	def stroke_polygon(self, polygon: Polygon, style: Style):
+	def stroke_polygon(self, polygon: ndarray, style: Style):
 		return Image(
-			cv.polylines(self.matrix, [polygon.as_array], True, style.color.as_tuple, style.line_width),
+			cv.polylines(self.matrix, [polygon], True, style.color.as_tuple, style.line_width),
 			self.name
 		)

@@ -1,11 +1,9 @@
+from __future__ import annotations
 from pathlib import Path
-from pyzbar.pyzbar import Decoded
-from typing import List, FrozenSet
+from typing import Callable, List, Union
 
 _n = '\n'
 _t = '\t'
-DecodedList = List[Decoded]
-DecodedMatrix = List[DecodedList]
 
 class MessageException(Exception):
 	def __init__(_, message: str = ''):
@@ -15,16 +13,21 @@ class NoScreen(MessageException):
 	pass
 
 class NotOverriden(MessageException):
-	def __init__(_, method_name: str):
+	def __init__(_, method: Overridable):
+		name = (
+			f'Property {method.fget.__qualname__}'
+			if isinstance(method, property)
+			else f'Method {method.__qualname__}'
+		)
 		super().__init__(
-			f'Method {method_name} is abstract and must be overriden.'
+			f'{name} is abstract and must be overriden.'
 		)
 
+Overridable = Union[Callable, property]
 PathList = List[Path]
 
 class static_property(property):
     def __get__(self, _, owner):
         return staticmethod(self.fget).__get__(None, owner)()
 
-StrFrozenSet = FrozenSet[str]
 StrList = List[str]

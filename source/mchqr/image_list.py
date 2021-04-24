@@ -1,19 +1,15 @@
 from __future__ import annotations
-from mchqr import DecodedMatrix, PathList
+from mchqr.dev import PathList
 from mchqr.geometry import Style
 from mchqr.image import Image
 from mchqr.io import is_escape
 from mchqr.platform import screen_size
+from mchqr.solution import AlgoSolution, DetectedList
 from typing import Iterable
 
 class ImageList(list):
 	def __init__(_, images: Iterable[Image]):
 		super().__init__(images)
-
-	def detect(self) -> DecodedMatrix:
-		return list(
-			map(Image.detect, self)
-		)
 
 	@staticmethod
 	def from_paths(paths: PathList):
@@ -33,8 +29,18 @@ class ImageList(list):
 			):
 				break
 
-	def stroke_decoded_matrix(self, decoded_matrix: DecodedMatrix, style: Style) -> ImageList:
-		return ImageList([
-			image.stroke_decoded_list(decoded_list, style)
-			for image, decoded_list in zip(self, decoded_matrix)
-		])
+	def stroke(self, solution: AlgoSolution, style: Style) -> ImageList:
+		def stroke_detected_list(image: Image, detected_list: DetectedList) -> Image:
+			for detected in detected_list:
+				image = image.stroke_polygon(detected.polygon, style)
+
+			return image
+
+		return ImageList(
+			map(
+				lambda zipped: stroke_detected_list(*zipped),
+				zip(
+					self, solution.values()
+				)
+			)
+		)

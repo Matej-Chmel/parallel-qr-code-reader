@@ -59,7 +59,7 @@ def screen_size():
 		return Size(screen.width, screen.height)
 	
 	except IndexError:
-		from mchqr import NoScreen
+		from mchqr.dev import NoScreen
 
 		raise NoScreen('No screen for displaying images found.')
 

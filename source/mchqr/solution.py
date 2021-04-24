@@ -1,26 +1,57 @@
-from json import dump, JSONDecoder, JSONEncoder, load
-from mchqr import DecodedList, StrFrozenSet
+from __future__ import annotations
+from dataclasses import dataclass
+from json import dump, JSONDecoder, load
+from mchqr.dev import StrList
 from mchqr.io import fopen
+from numpy import ndarray
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
-Solution = Dict[str, StrFrozenSet]
+@dataclass
+class AlgoPair:
+	name: str
+	detected_list: DetectedList
 
-def decode_solution(path: Path) -> Solution:
+	def __iter__(self):
+		return iter((self.name, self.detected_list))
+
+	def encode(self):
+		return (
+			self.name, (
+				None if not self.detected_list else
+				self.detected_list[0].content if len(self.detected_list) == 1
+				else list(
+					map(
+						lambda detected: detected.content,
+						self.detected_list
+					)
+				)
+			)
+		)
+
+def decode_content_solution(path: Path) -> Solution:
 	with fopen(path) as file:
 		return load(file, cls=SolutionDecoder)
 
-def encode_solution(path: Path, solution: Solution):
-	with fopen(path, 'w+') as file:
-		return dump(solution, file, cls=SolutionEncoder, indent=4)
+@dataclass
+class Detected:
+	content: str
+	polygon: ndarray
 
-def extract_content(decoded_list: DecodedList) -> StrFrozenSet:
-	return frozenset(
-		map(
-			lambda decoded: decoded.data.decode('utf-8'),
-			decoded_list
+def encode_solution(path: Path, solution: AlgoSolution):
+	with fopen(path, 'w+') as file:
+		return dump(
+			dict(
+				map(
+					lambda pair: AlgoPair(*pair).encode(),
+					solution.items()
+				)
+			),
+			file,
+			indent=4
 		)
-	)
+
+Solution = Dict[str, StrList]
 
 class SolutionDecoder(JSONDecoder):
 	def __init__(self, *args, **kwargs):
@@ -29,23 +60,11 @@ class SolutionDecoder(JSONDecoder):
 	def hook(_, solution: dict) -> Solution:
 		return {
 			key:
-				frozenset() if value is None else
-				frozenset([value]) if isinstance(value, str) else
-				frozenset(value)
+				[] if value is None else
+				[value] if isinstance(value, str)
+				else value
 			for key, value in solution.items()
 		}
 
-class SolutionEncoder(JSONEncoder):
-	def default(self, o):
-		if isinstance(o, frozenset):
-			data = list(o)
-
-			if not data:
-				return None
-
-			if len(data) == 1:
-				return data[0]
-
-			return data
-
-		return super().default(o)
+DetectedList = List[Detected]
+AlgoSolution = Dict[str, DetectedList]

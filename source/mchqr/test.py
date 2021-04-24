@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from inspect import signature
-from mchqr import PathList
+from mchqr.dev import PathList
 from mchqr.io import dataset_paths, image_paths
 from pathlib import Path
 from typing import Callable, Union
@@ -15,36 +15,44 @@ def test(function):
 tests = {}
 
 @test
+def all_tests():
+	from mchqr.dev import _n
+
+	for name, function in tests.items():
+		if name == all_tests.__name__:
+			continue
+
+		print(f'{_n}Running test: {name}{_n}')
+		function()
+
+@test
 def base_algorithm():
-	from mchqr import NotOverriden
-	from mchqr.algorithm import BaseAlgorithm
-	from mchqr.solution import Solution
+	from mchqr.algo import BaseAlgorithm
+	from mchqr.dev import NotOverriden
+	from mchqr.solution import AlgoSolution
 
 	class BadAlgorithm(BaseAlgorithm):
 		pass
 
 	class GoodAlgorithm(BaseAlgorithm):
-		def run(_) -> Solution:
-			return {
-				'1.jpg': frozenset(['1a', '1b']),
-				'2.jpg': frozenset(['2a', '2b'])
-			}
+		def run(_) -> AlgoSolution:
+			return 'Implemented.'
 
 	def print_test(*algorithm_types):
 		print(
 			*map(
 				lambda algorithm_type: test_algorithm(
-					algorithm_type(None)
+					algorithm_type(None, None)
 				),
 				algorithm_types
 			),
 			sep='\n'
 		)
 
-	def test_algorithm(BaseAlgorithm: BaseAlgorithm):
+	def test_algorithm(algo: BaseAlgorithm):
 		try:
-			return BaseAlgorithm.measure()
-		
+			return algo.measure()
+
 		except NotOverriden as e:
 			return e
 
@@ -52,17 +60,20 @@ def base_algorithm():
 
 @test
 def create_solution():
-	from mchqr.algorithm import Sequence
+	from mchqr.algo import Sequence
+	from mchqr.detector import zbar
 	from mchqr.image_list import ImageList
 	from mchqr.solution import encode_solution
 
 	def save_decoded(path: Path, image_paths: PathList):
 		elapsed, solution = Sequence(
+			zbar,
 			ImageList.from_paths(image_paths)
 		).measure()
 
 		encode_solution(
-			path.joinpath('solution.json'), solution
+			path.joinpath('solution.json'),
+			solution
 		)
 		print(f'Elapsed: {elapsed / 1_000_000_000 : .2f} seconds')
 
@@ -95,7 +106,7 @@ ImageTest = Union[PathAndPathListToNone, PathListToNone]
 
 @test
 def list_image_paths():
-	from mchqr import _n, _t
+	from mchqr.dev import _n, _t
 	from mchqr.io import DATA_FOLDER, solution_path
 
 	def format_entry(path: Path):
@@ -165,14 +176,16 @@ def show_image():
 
 @test
 def stroke_qr_codes():
+	from mchqr.algo import Sequence
+	from mchqr.detector import zbar
 	from mchqr.geometry import Style
 	from mchqr.image_list import ImageList
 
 	def show_all(image_paths: PathList):
 		images = ImageList.from_paths(image_paths)
-
-		images.stroke_decoded_matrix(
-			images.detect(), Style.dark_blue
+		images.stroke(
+			Sequence(zbar, images).run(),
+			Style.dark_blue
 		).show()
 
 	on_first_dataset(show_all)
@@ -180,7 +193,7 @@ def stroke_qr_codes():
 @test
 def test_static_property():
 	from dataclasses import dataclass
-	from mchqr import static_property
+	from mchqr.dev import static_property
 
 	@dataclass
 	class Example:
@@ -206,7 +219,7 @@ if __name__ == '__main__':
 
 	test = parser.parse_args().test.lower().replace(' ', '_')
 
-	if test not in tests:
-		print(f"Test {test} doesn't exist.")
-	else:
+	if test in tests:
 		tests[test]()
+	else:
+		print(f"Test {test} doesn't exist.")

@@ -4,8 +4,9 @@
 		{
 			"id": "test",
 			"default": "",
-			"description": "Choose a test.",
+			"description": "Choose test.",
 			"options": [
+				"all tests",
 				"base algorithm",
 				"create solution",
 				"geometry",

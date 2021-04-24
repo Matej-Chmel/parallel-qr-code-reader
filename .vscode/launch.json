@@ -18,6 +18,7 @@
 			"default": "",
 			"description": "Choose test.",
 			"options": [
+				"all tests",
 				"base algorithm",
 				"create solution",
 				"geometry",
