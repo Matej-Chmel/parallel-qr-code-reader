@@ -2,19 +2,19 @@
 	"version": "2.0.0",
 	"inputs": [
 		{
-			"id": "start_module",
-			"default": "main",
-			"description": "Choose a starting module.",
+			"id": "test",
+			"default": "",
+			"description": "Choose a test.",
 			"options": [
-				"algorithm",
-				"data",
+				"base algorithm",
+				"create solution",
 				"geometry",
-				"image",
-				"image_list",
-				"platform",
-				"property",
-				"screen",
-				"solution"
+				"get screen size",
+				"list image paths",
+				"os",
+				"show image",
+				"stroke qr codes",
+				"test static property"
 			],
 			"type": "pickString"
 		}
@@ -84,7 +84,8 @@
 			},
 			"args": [
 				"-m",
-				"mchqr.${input:start_module}"
+				"mchqr.test",
+				"${input:test}"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/source"

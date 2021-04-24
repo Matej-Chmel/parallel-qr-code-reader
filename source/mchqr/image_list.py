@@ -1,9 +1,9 @@
 from __future__ import annotations
+from mchqr import DecodedMatrix, PathList
+from mchqr.geometry import Style
 from mchqr.image import Image
-from mchqr.keys import is_escape
-from mchqr.screen import screen_size
-from mchqr.style import Style
-from mchqr.typing import DecodedMatrix, PathList
+from mchqr.io import is_escape
+from mchqr.platform import screen_size
 from typing import Iterable
 
 class ImageList(list):
@@ -38,15 +38,3 @@ class ImageList(list):
 			image.stroke_decoded_list(decoded_list, style)
 			for image, decoded_list in zip(self, decoded_matrix)
 		])
-
-if __name__ == '__main__':
-	from mchqr.test import on_first_dataset
-
-	def show_all(image_paths: PathList):
-		images = ImageList.from_paths(image_paths)
-
-		images.stroke_decoded_matrix(
-			images.detect(), Style.dark_blue
-		).show()
-
-	on_first_dataset(show_all)

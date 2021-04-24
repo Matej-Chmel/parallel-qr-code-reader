@@ -2,10 +2,9 @@ from __future__ import annotations
 import cv2 as cv
 from dataclasses import dataclass
 from pathlib import Path
-from mchqr.geometry import Polygon, Size
-from mchqr.keys import wait_key
-from mchqr.style import Style
-from mchqr.typing import DecodedList
+from mchqr import DecodedList
+from mchqr.geometry import Polygon, Size, Style
+from mchqr.io import wait_key
 from numpy import ndarray
 from pyzbar.pyzbar import decode, Decoded, ZBarSymbol
 
@@ -104,17 +103,3 @@ class Image:
 			cv.polylines(self.matrix, [polygon.as_array], True, style.color.as_tuple, style.line_width),
 			self.name
 		)
-
-if __name__ == '__main__':
-	from mchqr.screen import screen_size
-	from mchqr.test import on_first_dataset
-	from mchqr.typing import PathList
-
-	def show_first_image(image_paths: PathList):
-		Image.from_path(
-			image_paths[0]
-		).resize_max(
-			*screen_size()
-		).show()
-
-	on_first_dataset(show_first_image)

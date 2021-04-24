@@ -1,12 +1,30 @@
 from pathlib import Path
+from pyzbar.pyzbar import Decoded
+from typing import List, FrozenSet
 
 _n = '\n'
 _t = '\t'
+DecodedList = List[Decoded]
+DecodedMatrix = List[DecodedList]
 
-def join_paths(*paths: Path):
-	return SOURCE_FOLDER.joinpath(*paths)
+class MessageException(Exception):
+	def __init__(_, message: str = ''):
+		super().__init__(message)
 
-def fopen(path: Path, mode='r', encoding='utf-8'):
-	return open(path, mode, encoding=encoding)
+class NoScreen(MessageException):
+	pass
 
-SOURCE_FOLDER = Path(__file__).parent.parent.absolute()
+class NotOverriden(MessageException):
+	def __init__(_, method_name: str):
+		super().__init__(
+			f'Method {method_name} is abstract and must be overriden.'
+		)
+
+PathList = List[Path]
+
+class static_property(property):
+    def __get__(self, _, owner):
+        return staticmethod(self.fget).__get__(None, owner)()
+
+StrFrozenSet = FrozenSet[str]
+StrList = List[str]

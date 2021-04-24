@@ -1,4 +1,5 @@
 from __future__ import annotations
+from mchqr.geometry import Size
 from platform import system
 
 class OsMetaClass(type):
@@ -23,7 +24,43 @@ class OS(metaclass=OsMetaClass):
 		elif os_name.startswith('darwin'):
 			OS.X = True
 
-OS.detect()
+def screen_size():
+	if OS.WINDOWS:
+		import ctypes
+		from win32api import GetMonitorInfo, MonitorFromPoint
 
-if __name__ == '__main__':
-	print(OS)
+		ctypes.windll.shcore.SetProcessDpiAwareness(2)
+
+		monitor_info = GetMonitorInfo(
+			MonitorFromPoint((0, 0))
+		)
+		monitor_area = monitor_info.get("Monitor")
+		work_area = monitor_info.get("Work")
+
+		def dimension(i: int):
+			monitor_dimension = monitor_area[i]
+			work_dimension = work_area[i]
+
+			return (
+				work_dimension
+				if monitor_dimension == work_dimension
+				else work_dimension - monitor_dimension // 20
+			)
+
+		return Size(
+			dimension(2),
+			dimension(3)
+		)
+
+	try:
+		from screeninfo import get_monitors
+
+		screen = get_monitors()[0]
+		return Size(screen.width, screen.height)
+	
+	except IndexError:
+		from mchqr import NoScreen
+
+		raise NoScreen('No screen for displaying images found.')
+
+OS.detect()

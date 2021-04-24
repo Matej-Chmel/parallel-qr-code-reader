@@ -1,7 +1,22 @@
 from dataclasses import astuple, dataclass
+from mchqr import  static_property
 import numpy as np
 from pyzbar.pyzbar import Point
 from typing import List
+
+@dataclass
+class Color:
+	red: int
+	green: int
+	blue: int
+
+	@property
+	def as_tuple(self):
+		return (self.blue, self.green, self.red)
+	
+	@static_property
+	def dark_blue():
+		return Color(20, 40, 240)
 
 PointList = List[Point]
 
@@ -36,15 +51,11 @@ class Size:
 	def center(self):
 		return Point(self.width // 2, self.height // 2)
 
-if __name__ == '__main__':
-	size = Size(100, 200)
-	width, height = size
+@dataclass
+class Style:
+	color: Color
+	line_width: int = 8
 
-	print(
-		size,
-		size.as_tuple,
-		[width, height],
-		size.center,
-		Size(4.1, 5.5).as_int,
-		sep='\n'
-	)
+	@static_property
+	def dark_blue(line_width: int = 8):
+		return Style(Color.dark_blue, line_width)

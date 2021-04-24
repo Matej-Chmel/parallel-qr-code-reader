@@ -1,7 +1,10 @@
 from json import dump, JSONDecoder, JSONEncoder, load
-from mchqr import fopen
-from mchqr.typing import Solution
+from mchqr import DecodedList, StrFrozenSet
+from mchqr.io import fopen
 from pathlib import Path
+from typing import Dict
+
+Solution = Dict[str, StrFrozenSet]
 
 def decode_solution(path: Path) -> Solution:
 	with fopen(path) as file:
@@ -10,6 +13,14 @@ def decode_solution(path: Path) -> Solution:
 def encode_solution(path: Path, solution: Solution):
 	with fopen(path, 'w+') as file:
 		return dump(solution, file, cls=SolutionEncoder, indent=4)
+
+def extract_content(decoded_list: DecodedList) -> StrFrozenSet:
+	return frozenset(
+		map(
+			lambda decoded: decoded.data.decode('utf-8'),
+			decoded_list
+		)
+	)
 
 class SolutionDecoder(JSONDecoder):
 	def __init__(self, *args, **kwargs):
@@ -38,21 +49,3 @@ class SolutionEncoder(JSONEncoder):
 			return data
 
 		return super().default(o)
-
-if __name__ == '__main__':
-	from mchqr.image_list import ImageList
-	from mchqr.sequential_algorithm import SequentialAlgorithm
-	from mchqr.test import on_first_dataset
-	from mchqr.typing import PathList
-
-	def save_decoded(path: Path, image_paths: PathList):
-		elapsed, solution = SequentialAlgorithm(
-			ImageList.from_paths(image_paths)
-		).measure()
-
-		encode_solution(
-			path.joinpath('solution.json'), solution
-		)
-		print(f'Elapsed: {elapsed / 1_000_000_000 : .2f} seconds')
-
-	on_first_dataset(save_decoded)
