@@ -1,4 +1,5 @@
 from __future__ import annotations
+from numpy import ndarray
 from pathlib import Path
 from typing import Callable, List, Union
 
@@ -8,6 +9,8 @@ _t = '\t'
 class MessageException(Exception):
 	def __init__(_, message: str = ''):
 		super().__init__(message)
+
+NdArrayList = List[ndarray]
 
 class NoScreen(MessageException):
 	pass

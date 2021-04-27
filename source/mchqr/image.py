@@ -1,10 +1,11 @@
 from __future__ import annotations
 import cv2 as cv
 from dataclasses import dataclass
-from pathlib import Path
+from mchqr.dev import NdArrayList
 from mchqr.geometry import Size, Style
 from mchqr.io import wait_key
 from numpy import ndarray
+from pathlib import Path
 
 @dataclass
 class Image:
@@ -80,8 +81,8 @@ class Image:
 		y = center.y - self.height // 2
 		return self.show(x, y)
 
-	def stroke_polygon(self, polygon: ndarray, style: Style):
+	def stroke_polygons(self, polygons: NdArrayList, style: Style):
 		return Image(
-			cv.polylines(self.matrix, [polygon], True, style.color.as_tuple, style.line_width),
+			cv.polylines(self.matrix, polygons, True, style.color.as_tuple, style.line_width),
 			self.name
 		)

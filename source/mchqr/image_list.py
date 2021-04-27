@@ -31,10 +31,15 @@ class ImageList(list):
 
 	def stroke(self, solution: AlgoSolution, style: Style) -> ImageList:
 		def stroke_detected_list(image: Image, detected_list: DetectedList) -> Image:
-			for detected in detected_list:
-				image = image.stroke_polygon(detected.polygon, style)
-
-			return image
+			return image.stroke_polygons(
+				list(
+					map(
+						lambda detected: detected.polygon,
+						detected_list
+					)
+				),
+				style
+			)
 
 		return ImageList(
 			map(
