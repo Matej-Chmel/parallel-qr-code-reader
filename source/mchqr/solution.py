@@ -20,12 +20,10 @@ class AlgoPair:
 			self.name, (
 				None if not self.detected_list else
 				self.detected_list[0].content if len(self.detected_list) == 1
-				else list(
-					map(
-						lambda detected: detected.content,
-						self.detected_list
-					)
-				)
+				else [
+					detected.content
+					for detected in self.detected_list
+				]
 			)
 		)
 
@@ -53,12 +51,10 @@ def load_solution(path: Path) -> Solution:
 		return load(file, cls=SolutionDecoder)
 
 def prepare_solution(solution: AlgoSolution):
-	return dict(
-		map(
-			lambda pair: AlgoPair(*pair).encode(),
-			solution.items()
-		)
-	)
+	return dict((
+		AlgoPair(*pair).encode()
+		for pair in solution.items()
+	))
 
 Solution = Dict[str, StrList]
 

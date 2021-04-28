@@ -4,7 +4,7 @@ from mchqr.geometry import Style
 from mchqr.image import Image
 from mchqr.io import is_escape
 from mchqr.platform import screen_size
-from mchqr.solution import AlgoSolution, DetectedList
+from mchqr.solution import AlgoSolution
 from typing import Iterable
 
 class ImageList(list):
@@ -30,22 +30,12 @@ class ImageList(list):
 				break
 
 	def stroke(self, solution: AlgoSolution, style: Style) -> ImageList:
-		def stroke_detected_list(image: Image, detected_list: DetectedList) -> Image:
-			return image.stroke_polygons(
-				list(
-					map(
-						lambda detected: detected.polygon,
-						detected_list
-					)
-				),
+		return ImageList((
+			image.stroke_polygons([
+					detected.polygon
+					for detected in detected_list
+				],
 				style
 			)
-
-		return ImageList(
-			map(
-				lambda zipped: stroke_detected_list(*zipped),
-				zip(
-					self, solution.values()
-				)
-			)
-		)
+			for image, detected_list in zip(self, solution.values())
+		))

@@ -40,11 +40,11 @@ def base_algorithm():
 
 	def print_test(*algorithm_types):
 		print(
-			*map(
-				lambda algorithm_type: test_algorithm(
+			*(
+				test_algorithm(
 					algorithm_type(None, None)
-				),
-				algorithm_types
+				)
+				for algorithm_type in algorithm_types
 			),
 			sep='\n'
 		)
