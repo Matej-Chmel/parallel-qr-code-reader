@@ -8,16 +8,21 @@
 			"options": [
 				"all tests",
 				"base algorithm",
+				"color splits",
 				"create solution",
 				"geometry",
 				"get screen size",
 				"list image paths",
+				"measure, ProcessPool, zbar",
+				"measure, ProcessPool, zxing",
+				"measure, Sequence, zbar",
+				"measure, Sequence, zxing",
 				"os",
-				"process pool",
-				"sequence",
 				"show image",
-				"stroke qr codes",
-				"test static property"
+				"stroke qr codes, ProcessPool, zbar",
+				"stroke qr codes, ProcessPool, zxing",
+				"stroke qr codes, Sequence, zbar",
+				"stroke qr codes, Sequence, zxing",
 			],
 			"type": "pickString"
 		}
@@ -35,19 +40,6 @@
 					"requirements_common.txt",
 					"-r",
 					"requirements_linux.txt",
-					"--user"
-				]
-			},
-			"osx": {
-				"command": "python",
-				"args": [
-					"-m",
-					"pip",
-					"install",
-					"-r",
-					"requirements_common.txt",
-					"-r",
-					"requirements_osx.txt",
 					"--user"
 				]
 			},
@@ -75,7 +67,7 @@
 			"type": "shell"
 		},
 		{
-			"label": "Run",
+			"label": "Run test",
 			"linux": {
 				"command": "python"
 			},
@@ -97,10 +89,10 @@
 			"type": "shell"
 		},
 		{
-			"label": "Install & Run",
+			"label": "Install & Run test",
 			"dependsOn": [
 				"Install",
-				"Run"
+				"Run test"
 			],
 			"dependsOrder": "sequence",
 			"problemMatcher": []

@@ -1,20 +1,29 @@
 from dataclasses import astuple, dataclass
 from mchqr.dev import static_property
 from pyzbar.pyzbar import Point
+from typing import NamedTuple
 
-@dataclass
-class Color:
-	red: int
-	green: int
+class color(NamedTuple):
 	blue: int
+	green: int
+	red: int
 
-	@property
-	def as_tuple(self):
-		return (self.blue, self.green, self.red)
-
+class Color:
 	@static_property
 	def dark_blue():
-		return Color(20, 40, 240)
+		return color(240, 40, 20)
+
+	@static_property
+	def full_blue():
+		return color(255, 0, 0)
+
+	@static_property
+	def full_green():
+		return color(0, 255, 0)
+
+	@static_property
+	def full_red():
+		return color(0, 0, 255)
 
 @dataclass
 class Size:

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from mchqr.detector import Detector
-from mchqr.dev import NotOverriden
-from mchqr.image_list import ImageList
+from mchqr.dev import NotOverriden, subclasses_dict
+from mchqr.image import ImageList
 from mchqr.solution import AlgoSolution
 from multiprocessing import Pool
 from time import perf_counter_ns
@@ -33,3 +33,5 @@ class Sequence(BaseAlgorithm):
 		return dict(
 			map(self.detector, self.images)
 		)
+
+algos = subclasses_dict(BaseAlgorithm)

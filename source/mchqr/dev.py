@@ -1,10 +1,12 @@
 from __future__ import annotations
 from numpy import ndarray
 from pathlib import Path
-from typing import Callable, List, Union
+from typing import Any, Callable, List, Union
 
 _n = '\n'
 _t = '\t'
+
+AnyList = List[Any]
 
 class MessageException(Exception):
 	def __init__(_, message: str = ''):
@@ -34,3 +36,20 @@ class static_property(property):
         return staticmethod(self.fget).__get__(None, owner)()
 
 StrList = List[str]
+
+def subclasses(_class: type):
+	return _class.__subclasses__()
+
+def subclasses_dict(_class: type):
+	return {
+		_class.__name__: _class
+		for _class in subclasses(_class)
+	}
+
+def to_str(object):
+	if isinstance(object, str):
+		return object
+
+	return object.__name__
+
+AnyOrStrList = Union[AnyList, StrList]

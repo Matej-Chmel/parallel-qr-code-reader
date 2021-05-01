@@ -29,7 +29,7 @@ def solution_path(path: Path):
 			f"Dataset {path.stem} doesn't contain any solution file."
 		)
 
-def wait_key():
+def wait_key() -> int:
 	return cv.waitKey(0)
 
 SOURCE_FOLDER = Path(__file__).parent.parent.absolute()
