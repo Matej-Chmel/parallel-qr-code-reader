@@ -1,101 +1,117 @@
 {
-	"version": "2.0.0",
-	"inputs": [
-		{
-			"id": "test",
-			"default": "",
-			"description": "Choose test.",
-			"options": [
-				"all tests",
-				"base algorithm",
-				"color splits",
-				"create solution",
-				"geometry",
-				"get screen size",
-				"list image paths",
-				"measure, ProcessPool, zbar",
-				"measure, ProcessPool, zxing",
-				"measure, Sequence, zbar",
-				"measure, Sequence, zxing",
-				"os",
-				"show image",
-				"stroke qr codes, ProcessPool, zbar",
-				"stroke qr codes, ProcessPool, zxing",
-				"stroke qr codes, Sequence, zbar",
-				"stroke qr codes, Sequence, zxing",
-			],
-			"type": "pickString"
-		}
-	],
-	"tasks": [
-		{
-			"label": "Install",
-			"linux": {
-				"command": "python",
-				"args": [
-					"-m",
-					"pip",
-					"install",
-					"-r",
-					"requirements_common.txt",
-					"-r",
-					"requirements_linux.txt",
-					"--user"
-				]
-			},
-			"windows": {
-				"command": "py",
-				"args": [
-					"-m",
-					"pip",
-					"install",
-					"-r",
-					"requirements_common.txt",
-					"-r",
-					"requirements_windows.txt",
-					"--user"
-				]
-			},
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"options": {
-				"cwd": "${workspaceFolder}/source/install"
-			},
-			"problemMatcher": [],
-			"type": "shell"
-		},
-		{
-			"label": "Run test",
-			"linux": {
-				"command": "python"
-			},
-			"osx": {
-				"command": "python"
-			},
-			"windows": {
-				"command": "py"
-			},
-			"args": [
-				"-m",
-				"mchqr.test",
-				"${input:test}"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/source"
-			},
-			"problemMatcher": [],
-			"type": "shell"
-		},
-		{
-			"label": "Install & Run test",
-			"dependsOn": [
-				"Install",
-				"Run test"
-			],
-			"dependsOrder": "sequence",
-			"problemMatcher": []
-		}
-	]
+    "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "test",
+            "default": "",
+            "description": "Choose test.",
+            "options": [
+                "all tests",
+                "base algorithm",
+                "color splits",
+                "create solution",
+                "geometry",
+                "get screen size",
+                "list image paths",
+                "measure, ProcessPool, zbar",
+                "measure, ProcessPool, zxing",
+                "measure, Sequence, zbar",
+                "measure, Sequence, zxing",
+                "os",
+                "show image",
+                "stroke qr codes, ProcessPool, zbar",
+                "stroke qr codes, ProcessPool, zxing",
+                "stroke qr codes, Sequence, zbar",
+                "stroke qr codes, Sequence, zxing",
+                "test static property"
+            ],
+            "type": "pickString"
+        }
+    ],
+    "tasks": [
+        {
+            "label": "Install",
+            "linux": {
+                "command": "python",
+                "args": [
+                    "-m",
+                    "pip",
+                    "install",
+                    "-r",
+                    "requirements_common.txt",
+                    "-r",
+                    "requirements_linux.txt",
+                    "--user"
+                ]
+            },
+            "windows": {
+                "command": "py",
+                "args": [
+                    "-m",
+                    "pip",
+                    "install",
+                    "-r",
+                    "requirements_common.txt",
+                    "-r",
+                    "requirements_windows.txt",
+                    "--user"
+                ]
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/source/install"
+            },
+            "problemMatcher": [],
+            "type": "shell"
+        },
+        {
+            "label": "Install & Run test",
+            "dependsOn": [
+                "Install",
+                "Run test"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Refresh tests",
+            "linux": {
+                "command": "python"
+            },
+            "windows": {
+                "command": "py"
+            },
+            "args": [
+                "-m",
+                "mchqr.test.vscode"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/source"
+            },
+            "problemMatcher": [],
+            "type": "shell"
+        },
+        {
+            "label": "Run test",
+            "linux": {
+                "command": "python"
+            },
+            "windows": {
+                "command": "py"
+            },
+            "args": [
+                "-m",
+                "mchqr.test",
+                "${input:test}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/source"
+            },
+            "problemMatcher": [],
+            "type": "shell"
+        }
+    ]
 }

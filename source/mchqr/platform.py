@@ -1,15 +1,15 @@
 from __future__ import annotations
+from mchqr.dev import NoScreen, UnsupportedOS
 from mchqr.geometry import Size
 from platform import system
 
 class OsMetaClass(type):
 	def __str__(self: OS):
-		return 'Linux' if self.LINUX else 'Windows' if self.WINDOWS else 'OSX'
+		return 'Linux' if self.LINUX else 'Windows'
 
 class OS(metaclass=OsMetaClass):
 	LINUX = False
 	WINDOWS = False
-	X = False
 
 	@staticmethod
 	def detect():
@@ -21,8 +21,12 @@ class OS(metaclass=OsMetaClass):
 		elif os_name.startswith('win'):
 			OS.WINDOWS = True
 
-		elif os_name.startswith('darwin'):
-			OS.X = True
+		else:
+			detected_name = 'OS X' if os_name.startswith('darwin') else os_name
+
+			raise UnsupportedOS(
+				f'{detected_name} is not supported.'
+			)
 
 def screen_size():
 	if OS.WINDOWS:
@@ -59,8 +63,6 @@ def screen_size():
 		return Size(screen.width, screen.height)
 	
 	except IndexError:
-		from mchqr.dev import NoScreen
-
 		raise NoScreen('No screen for displaying images found.')
 
 OS.detect()

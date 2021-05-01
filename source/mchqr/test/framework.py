@@ -1,7 +1,8 @@
 from argparse import ArgumentParser
-from inspect import signature
-from mchqr.algo import algos, BaseAlgorithm, ProcessPool, Sequence
-from mchqr.detector import detectors, zbar, zxing
+from inspect import isclass, signature
+from itertools import product
+from mchqr.algo import algos, BaseAlgorithm
+from mchqr.detector import detectors
 from mchqr.dev import _n, AnyOrStrList, PathList, StrList, to_str
 from mchqr.image import ImageList
 from mchqr.io import dataset_paths, image_paths
@@ -23,7 +24,7 @@ def accepts_one_argument(function: Callable):
 	) == 1
 
 def algo(arguments: AnyOrStrList, images: ImageList, test_name: str) -> BaseAlgorithm:
-	if issubclass(arguments[0], BaseAlgorithm) and callable(arguments[1]):
+	if isclass(arguments[0]) and issubclass(arguments[0], BaseAlgorithm) and callable(arguments[1]):
 		return arguments[0](
 			arguments[1], images
 		)
@@ -36,11 +37,8 @@ def algo(arguments: AnyOrStrList, images: ImageList, test_name: str) -> BaseAlgo
 	except IndexError:
 		return print(f'Test {test_name} accepts at least two arguments.')
 
-ALGO_COMBINATIONS: ArgumentCombinations = (
-	(ProcessPool, zbar),
-	(ProcessPool, zxing),
-	(Sequence, zbar),
-	(Sequence, zxing)
+ALGO_COMBINATIONS: ArgumentCombinations = tuple(
+	product(algos.values(), detectors.values())
 )
 
 def main():

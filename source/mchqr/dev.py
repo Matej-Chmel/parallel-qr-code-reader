@@ -52,4 +52,7 @@ def to_str(object):
 
 	return object.__name__
 
+class UnsupportedOS(MessageException):
+	pass
+
 AnyOrStrList = Union[AnyList, StrList]

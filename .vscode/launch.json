@@ -1,43 +1,50 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "Debug",
-			"args": [
-				"${input:test}"
-			],
-			"cwd": "${workspaceFolder}/source",
-			"module": "mchqr.test",
-			"request": "launch",
-			"type": "python"
-		}
-	],
-	"inputs": [
-		{
-			"id": "test",
-			"default": "",
-			"description": "Choose test.",
-			"options": [
-				"all tests",
-				"base algorithm",
-				"color splits",
-				"create solution",
-				"geometry",
-				"get screen size",
-				"list image paths",
-				"measure, ProcessPool, zbar",
-				"measure, ProcessPool, zxing",
-				"measure, Sequence, zbar",
-				"measure, Sequence, zxing",
-				"os",
-				"show image",
-				"stroke qr codes, ProcessPool, zbar",
-				"stroke qr codes, ProcessPool, zxing",
-				"stroke qr codes, Sequence, zbar",
-				"stroke qr codes, Sequence, zxing",
-				"test static property"
-			],
-			"type": "pickString"
-		}
-	]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "args": [
+                "${input:test}"
+            ],
+            "cwd": "${workspaceFolder}/source",
+            "module": "mchqr.test",
+            "request": "launch",
+            "type": "python"
+        },
+        {
+            "name": "Refresh tests",
+            "cwd": "${workspaceFolder}/source",
+            "module": "mchqr.test.vscode",
+            "request": "launch",
+            "type": "python"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "test",
+            "default": "",
+            "description": "Choose test.",
+            "options": [
+                "all tests",
+                "base algorithm",
+                "color splits",
+                "create solution",
+                "geometry",
+                "get screen size",
+                "list image paths",
+                "measure, ProcessPool, zbar",
+                "measure, ProcessPool, zxing",
+                "measure, Sequence, zbar",
+                "measure, Sequence, zxing",
+                "os",
+                "show image",
+                "stroke qr codes, ProcessPool, zbar",
+                "stroke qr codes, ProcessPool, zxing",
+                "stroke qr codes, Sequence, zbar",
+                "stroke qr codes, Sequence, zxing",
+                "test static property"
+            ],
+            "type": "pickString"
+        }
+    ]
 }
