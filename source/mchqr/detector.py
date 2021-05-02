@@ -1,9 +1,9 @@
+import cv2 as cv
 from mchqr.image import Image
 from mchqr.solution import AlgoPair, Detected, DetectedList
 import numpy as np
 from pyzbar.pyzbar import decode, Decoded, ZBarSymbol
 from typing import Callable, List
-from zxing import BarCodeReader
 
 DecodedList = List[Decoded]
 Detector = Callable[[Image], AlgoPair]
@@ -18,6 +18,24 @@ def detector(function: Detector):
 detectors = {}
 
 @detector
+def cv_detector(image: Image):
+	_, data_list, bounding_boxes, _ = cv.QRCodeDetector().detectAndDecodeMulti(image.matrix)
+
+	return algo_pair(
+		image, [
+			Detected(
+				data_list[i],
+				np.int32(
+					bounding_boxes[i]
+				)
+			)
+			for i in range(
+				len(data_list)
+			)
+		]
+	)
+
+@detector
 def zbar(image: Image):
 	return algo_pair(
 		image, [
@@ -28,24 +46,5 @@ def zbar(image: Image):
 			for decoded in decode(
 				image.matrix, [ZBarSymbol.QRCODE]
 			)
-		]
-	)
-
-@detector
-def zxing(image: Image):
-	barcodes = BarCodeReader().decode(
-		image.path_as_str, possible_formats=["QR_CODE"]
-	)
-
-	if not isinstance(barcodes, list):
-		barcodes = [barcodes]
-
-	return algo_pair(
-		image, [
-			Detected(
-				barcode.raw,
-				np.array(barcode.points, dtype=np.int32)
-			)
-			for barcode in barcodes
 		]
 	)

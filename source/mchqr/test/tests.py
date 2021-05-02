@@ -158,10 +158,11 @@ def os():
 	print(OS)
 
 @test(ALGO_COMBINATIONS)
-def measure(arguments: AnyOrStrList):
-	def print_solution(image_paths: PathList):
+def measure_and_stroke(arguments: AnyOrStrList):
+	def print_and_show(image_paths: PathList):
+		images = ImageList.from_paths(image_paths)
 		elapsed, solution = algo(
-			arguments, ImageList.from_paths(image_paths), measure.__name__
+			arguments, images, measure_and_stroke.__name__
 		).measure()
 
 		print(
@@ -170,7 +171,9 @@ def measure(arguments: AnyOrStrList):
 			sep='\n'
 		)
 
-	on_first_dataset(print_solution)
+		images.stroke(solution, Style.dark_blue).show()
+
+	on_first_dataset(print_and_show)
 
 @test()
 def show_image():
@@ -182,17 +185,6 @@ def show_image():
 		).show()
 
 	on_first_dataset(show_first_image)
-
-@test(ALGO_COMBINATIONS)
-def stroke_qr_codes(arguments: AnyOrStrList):
-	def show_all(image_paths: PathList):
-		images = ImageList.from_paths(image_paths)
-		images.stroke(
-			algo(arguments, images, stroke_qr_codes.__name__).run(),
-			Style.dark_blue
-		).show()
-
-	on_first_dataset(show_all)
 
 @test()
 def test_static_property():

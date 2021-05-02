@@ -38,6 +38,7 @@ def refresh_tests(json_path: Path):
 		file.seek(0)
 		dump(config, file, indent=4)
 		file.write('\n')
+		file.truncate()
 
 VSCODE_FOLDER = SOURCE_FOLDER.parent.joinpath('.vscode').absolute()
 
